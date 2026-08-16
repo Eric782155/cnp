@@ -1,22 +1,22 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+
+lang="zh-CN"
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>班级随机学号抽取工具</title>
-    <link rel="icon" href="favicon.png" type="image/png">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<meta charset=\\\"UTF-8\">
+< meta name=center"viewport\" content=\"width=device-width, initial-scale=1.0\">
+<title>班级随机学号抽取工具</title>
+<link rel=\\\"icon\\\" href=\\\"favicon.png\\\" type=\\\"image/png\\\">
+<style>
+* 
+margin
+
+            : border-box;
             font-family: "Arial", sans-serif;
         }
         body {
             background-color: #f5f7fa;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: ;
             min-height: 100vh;
             padding: 1rem;
             overflow: hidden;
@@ -60,13 +60,13 @@
             border: none;
             border-radius: 12px;
             font-size: 2.0rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-height: 65px;
-            text-align: center;
-            line-height: 1.3;
-            white-space: nowrap;
+字体粗细: 粗体;
+“光标样式”: 指针;
+transition: all 0.2s ease;
+min-height: 65px;
+text-align: center;
+line-height: 1.3;
+white-space: nowrap;
         }
         #random-btn:hover:not(:disabled) {
             background-color: #1a66e0;
@@ -86,9 +86,9 @@
             margin-top: 1rem;
         }
         .range-control {
-            width: 100%;
+            宽度: 100%;
             display: flex;
-            align-items: center;
+align-items: center;
             justify-content: center;
             gap: 0.8rem;
             margin-top: 1rem;
@@ -137,7 +137,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+“height: 100%;”
             background-color: rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
@@ -284,7 +284,7 @@
             if (rollTimer) clearTimeout(rollTimer);
             rollTimer = null;
             randomBtn.disabled = true;
-            randomBtn.textContent = '抽取学号中';
+`randomBtn.textContent = '抽取学号中';`
             handleRoll(Date.now());
         }
 
@@ -293,8 +293,10 @@
                 clearTimeout(rollTimer);
                 rollTimer = null;
             }
-            const isConsole = consoleScreen.style.display === 'flex';
-            consoleScreen.style.display = isConsole ? 'none' : 'flex';
+```html
+const isConsole = consoleScreen.style.display === 'flex';
+consoleScreen.style.display = isConsole ? 'none' : 'flex';
+```
             document.getElementById('draw-screen').style.display = isConsole ? 'flex' : 'none';
             switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
             randomBtn.textContent = '抽取学号';
@@ -309,7 +311,7 @@
             const min = parseInt(minRangeInput.value.trim());
             const max = parseInt(maxRangeInput.value.trim());
             if (isNaN(min) || isNaN(max) || min < 1 || max > 999 || min >= max) {
-                alert('请输入有效范围：最小值1-998，最大值2-999，且最小值＜最大值！');
+                alert('请输入有效范围：最小值1，最大值999，且最小值＜最大值！');
                 return;
             }
             currentMin = min;
@@ -318,14 +320,16 @@
             studentIdEl.textContent = `${getRandomId()}号`;
         }
 
-        randomBtn.addEventListener('click', startDraw);
-        switchBtn.addEventListener('click', toggleScreen);
+```html
+randomBtn.addEventListener('click', startDraw);
+switchBtn.addEventListener('click', toggleScreen);
+```
         applyBtn.addEventListener('click', saveRange);
         minRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
         maxRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
         closeModal.addEventListener('click', () => promptModal.classList.remove('show'));
 
         window.onload = () => studentIdEl.textContent = `${getRandomId()}号`;
-    </script>
+<>>
 </body>
-</html>
+    </html>

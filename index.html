@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级随机学号抽取工具</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Arial", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        .container {
+            background: white;
+            padding: 2.5rem 1.8rem 3.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        .screen {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        #draw-screen { display: flex; }
+        #console-screen { display: none; gap: 1.5rem; }
+        .student-id-display {
+            font-size: clamp(4rem, 22vw, 6.5rem);
+            font-weight: bold;
+            color: #2d7ff9;
+            line-height: 1.2;
+            white-space: nowrap;
+            margin-top: 1rem;
+        }
+        #random-btn {
+            width: 200px;
+            padding: 0.8rem 1.2rem;
+            background-color: #2d7ff9;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 2.0rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 65px;
+            text-align: center;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        #random-btn:hover:not(:disabled) {
+            background-color: #1a66e0;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(45,127,249,0.2);
+        }
+        #random-btn:disabled {
+            background-color: #8ec5fc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .console-title {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        .range-control {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .range-label { font-size: 0.95rem; color: #666; flex-shrink: 0; }
+        .range-input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            text-align: center;
+            max-width: 90px;
+        }
+        .range-separator { font-size: 1.2rem; color: #666; font-weight: 500; }
+        .range-tip { font-size: 0.85rem; color: #888; text-align: left; margin-top: 0.3rem; }
+        #apply-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #e9ecef;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+        #apply-btn:hover { background-color: #dee2e6; }
+        .switch-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.4rem 0.9rem;
+            background-color: #f1f3f5;
+            color: #666;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .switch-btn:hover { background-color: #e9ecef; }
+        .prompt-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .prompt-modal.show { opacity: 1; visibility: visible; }
+        .modal-content {
+            background-color: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .modal-title {
+            font-size: 1.6rem;
+            color: #2d7ff9;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+        .close-modal {
+            padding: 0.8rem 1.5rem;
+            background-color: #2d7ff9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .close-modal:hover { background-color: #1a66e0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="screen" id="draw-screen">
+            <div class="student-id-display" id="student-id">--号</div>
+            <button id="random-btn">抽取学号</button>
+        </div>
+        <div class="screen" id="console-screen">
+            <div class="console-title">学号范围设置</div>
+            <div class="range-control">
+                <span class="range-label">范围：</span>
+                <input type="number" id="min-range" class="range-input" value="1" min="1" max="998">
+                <span class="range-separator">~</span>
+                <input type="number" id="max-range" class="range-input" value="30" min="2" max="999">
+            </div>
+            <div class="range-tip">支持设置1~999内范围，最小值需小于最大值</div>
+            <button id="apply-btn">保存范围并返回</button>
+        </div>
+        <button class="switch-btn" id="switch-btn">打开控制台</button>
+    </div>
+    <div class="prompt-modal" id="prompt-modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modal-title">请XX同学回答问题</div>
+            <button class="close-modal" id="close-modal">确定</button>
+        </div>
+    </div>
+
+    <script>
+        const studentIdEl = document.getElementById('student-id');
+        const randomBtn = document.getElementById('random-btn');
+        const switchBtn = document.getElementById('switch-btn');
+        const consoleScreen = document.getElementById('console-screen');
+        const applyBtn = document.getElementById('apply-btn');
+        const minRangeInput = document.getElementById('min-range');
+        const maxRangeInput = document.getElementById('max-range');
+        const promptModal = document.getElementById('prompt-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const closeModal = document.getElementById('close-modal');
+
+        const TOTAL_ROLL_TIME = 10000;
+        const START_DECEL_TIME = 5000;
+        const SMOOTH_TRANS_TIME = 1000;
+        const MODAL_DELAY = 500;
+        const MIN_DELAY = 30;
+        const MAX_DELAY = 800;
+        let currentMin = 1;
+        let currentMax = 45;
+        let rollTimer = null;
+
+        const studentList = {
+            1: "",2: "",3: "",4: "",5: "",
+            6: "",7: "",8: "",9: "",10: "",
+            11: "",12: "",13: "",14: "",15: "",
+            16: "",17: "",18: "",19: "",20: "",
+            21: "",22: "",23: "",24: "",25: "",
+            26: "",27: "",28: "",29: "",30: "",
+            31: "",32: "",33: "",34: "",35: "",
+            36: "",37: "",38: "",39: "",40: "",
+            41: "",42: "",43: "",44: "",45: "",
+        };
+
+        const getRandomId = () => Math.floor(Math.random() * (currentMax - currentMin + 1)) + currentMin;
+        const getStudentName = (id) => studentList[id] || `${id}号`;
+
+        function handleRoll(startTime) {
+            const elapsed = Date.now() - startTime;
+            let nextDelay = MIN_DELAY;
+
+            if (elapsed < START_DECEL_TIME) {
+                nextDelay = MIN_DELAY;
+            } else if (elapsed <= START_DECEL_TIME + SMOOTH_TRANS_TIME) {
+                const transElapsed = elapsed - START_DECEL_TIME;
+                const transRatio = transElapsed / SMOOTH_TRANS_TIME;
+                const smoothRatio = Math.sin(transRatio * Math.PI / 2);
+                nextDelay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * 0.15 * smoothRatio;
+            } else {
+                const normalElapsed = elapsed - (START_DECEL_TIME + SMOOTH_TRANS_TIME);
+                const normalTotal = TOTAL_ROLL_TIME - (START_DECEL_TIME + SMOOTH_TRANS_TIME);
+                const normalRatio = normalElapsed / normalTotal;
+                nextDelay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (0.15 + 0.85 * normalRatio);
+            }
+
+            nextDelay = Math.min(nextDelay, MAX_DELAY);
+            studentIdEl.textContent = `${getRandomId()}号`;
+
+            if (elapsed >= TOTAL_ROLL_TIME) {
+                clearTimeout(rollTimer);
+                rollTimer = null;
+                const finalId = getRandomId();
+                studentIdEl.textContent = `${finalId}号`;
+                randomBtn.textContent = '抽取学号';
+                randomBtn.disabled = false;
+
+                setTimeout(() => {
+                    modalTitle.textContent = `请${finalId}号同学回答`;
+                    promptModal.classList.add('show');
+                }, MODAL_DELAY);
+                return;
+            }
+
+            rollTimer = setTimeout(() => handleRoll(startTime), nextDelay);
+        }
+
+        function startDraw() {
+            if (rollTimer) clearTimeout(rollTimer);
+            rollTimer = null;
+            randomBtn.disabled = true;
+            randomBtn.textContent = '抽取学号中';
+            handleRoll(Date.now());
+        }
+
+        function toggleScreen() {
+            if (rollTimer) {
+                clearTimeout(rollTimer);
+                rollTimer = null;
+            }
+            const isConsole = consoleScreen.style.display === 'flex';
+            consoleScreen.style.display = isConsole ? 'none' : 'flex';
+            document.getElementById('draw-screen').style.display = isConsole ? 'flex' : 'none';
+            switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
+            randomBtn.textContent = '抽取学号';
+            randomBtn.disabled = false;
+            if (!isConsole) {
+                minRangeInput.value = currentMin;
+                maxRangeInput.value = currentMax;
+            }
+        }
+
+        function saveRange() {
+            const min = parseInt(minRangeInput.value.trim());
+            const max = parseInt(maxRangeInput.value.trim());
+            if (isNaN(min) || isNaN(max) || min < 1 || max > 999 || min >= max) {
+                alert('请输入有效范围：最小值1-998，最大值2-999，且最小值＜最大值！');
+                return;
+            }
+            currentMin = min;
+            currentMax = max;
+            toggleScreen();
+            studentIdEl.textContent = `${getRandomId()}号`;
+        }
+
+        randomBtn.addEventListener('click', startDraw);
+        switchBtn.addEventListener('click', toggleScreen);
+        applyBtn.addEventListener('click', saveRange);
+        minRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
+        maxRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
+        closeModal.addEventListener('click', () => promptModal.classList.remove('show'));
+
+        window.onload = () => studentIdEl.textContent = `${getRandomId()}号`;
+    </script>
+</body>
+</html>

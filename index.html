@@ -1,12 +1,12 @@
-
-lang="zh-CN"
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-
-< meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>班级随机学号抽取工具</title>
-<link rel=\"icon\" href=\"favicon.png\" type=\"image/png\">
-<style>
-* 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级随机学号抽取工具</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -24,17 +24,16 @@ lang="zh-CN"
         .container {
             background: white;
             padding: 2.5rem 1.8rem 3.5rem;
-border-radius: 16px;
-box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-width: 100%;
-max-width: 380px;
-max-height: 85vh;
-display: flex;
-```
-flex-direction: column;
-justify-content: space-between;
-position: relative;
-z-index: 1;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
         }
         .screen {
             width: 100%;
@@ -60,8 +59,8 @@ z-index: 1;
             color: white;
             border: none;
             border-radius: 12px;
-font-size: 2.0rem;
-            字体粗细lang="zh-CN"粗体;
+            font-size: 2.0rem;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
             min-height: 65px;
@@ -81,7 +80,7 @@ font-size: 2.0rem;
             box-shadow: none;
         }
         .console-title {
-font-size: 1.1rem;
+            font-size: 1.1rem;
             color: #333;
             font-weight: 500;
             margin-top: 1rem;
@@ -161,7 +160,7 @@ font-size: 1.1rem;
         .modal-title {
             font-size: 1.6rem;
             color: #2d7ff9;
-font-weight: bold;
+            font-weight: bold;
             margin-bottom: 1.5rem;
             line-height: 1.4;
         }
@@ -260,16 +259,16 @@ font-weight: bold;
                 nextDelay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (0.15 + 0.85 * normalRatio);
             }
 
-nextDelay = Math.min(nextDelay, MAX_DELAY);
+            nextDelay = Math.min(nextDelay, MAX_DELAY);
             studentIdEl.textContent = `${getRandomId()}号`;
 
             if (elapsed >= TOTAL_ROLL_TIME) {
                 clearTimeout(rollTimer);
                 rollTimer = null;
                 const finalId = getRandomId();
-studentIdEl.textContent = `${finalId}号`;
-randomBtn.textContent = '抽取学号';
-randomBtn.disabled = false;
+                studentIdEl.textContent = `${finalId}号`;
+                randomBtn.textContent = '抽取学号';
+                randomBtn.disabled = false;
 
                 setTimeout(() => {
                     modalTitle.textContent = `请${finalId}号同学回答`;
@@ -281,8 +280,8 @@ randomBtn.disabled = false;
             rollTimer = setTimeout(() => handleRoll(startTime), nextDelay);
         }
 
-function startDraw() {
-if (rollTimer) clearTimeout(rollTimer);
+        function startDraw() {
+            if (rollTimer) clearTimeout(rollTimer);
             rollTimer = null;
             randomBtn.disabled = true;
             randomBtn.textContent = '抽取学号中';
@@ -294,12 +293,10 @@ if (rollTimer) clearTimeout(rollTimer);
                 clearTimeout(rollTimer);
                 rollTimer = null;
             }
-```html
-const isConsole = consoleScreen.style.display === 'flex';
-consoleScreen.style.display = isConsole ? 'none' : 'flex';
-```
-document.getElementById('draw-screen').style.display = isConsole ? 'flex' : 'none';
-switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
+            const isConsole = consoleScreen.style.display === 'flex';
+            consoleScreen.style.display = isConsole ? 'none' : 'flex';
+            document.getElementById('draw-screen').style.display = isConsole ? 'flex' : 'none';
+            switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
             randomBtn.textContent = '抽取学号';
             randomBtn.disabled = false;
             if (!isConsole) {
@@ -312,7 +309,7 @@ switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
             const min = parseInt(minRangeInput.value.trim());
             const max = parseInt(maxRangeInput.value.trim());
             if (isNaN(min) || isNaN(max) || min < 1 || max > 999 || min >= max) {
-                alert('请输入有效范围：最小值1，最大值999，且最小值需小于最大值！');
+                alert('请输入有效范围：最小值1-998，最大值2-999，且最小值＜最大值！');
                 return;
             }
             currentMin = min;
@@ -323,8 +320,8 @@ switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
 
         randomBtn.addEventListener('click', startDraw);
         switchBtn.addEventListener('click', toggleScreen);
-        应用按钮.addEventListener('click', 保存范围);
-        最小范围输入框.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
+        applyBtn.addEventListener('click', saveRange);
+        minRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
         maxRangeInput.addEventListener('keypress', e => e.key === 'Enter' && saveRange());
         closeModal.addEventListener('click', () => promptModal.classList.remove('show'));
 

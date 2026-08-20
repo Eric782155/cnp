@@ -296,7 +296,7 @@
             const isConsole = consoleScreen.style.display === 'flex';
             consoleScreen.style.display = isConsole ? 'none' : 'flex';
             document.getElementById('draw-screen').style.display = isConsole ? 'flex' : 'none';
-            switchBtn.textContent = isConsole ? '返回抽取界面' : '打开控制台';
+            switchBtn.textContent = isConsole ? '打开控制台' : '返回抽取界面';
             randomBtn.textContent = '抽取学号';
             randomBtn.disabled = false;
             if (!isConsole) {
